@@ -96,7 +96,7 @@ const getPiece = function (id) {
 };
 
 const placeMove = function (id) {
-  let enemyEmperor = { white: "k", black: "K" }
+  let enemyEmperor = { white: "k", black: "K" };
   let move = idToIndex(id);
   setAttributeToGetPiece();
   if (!isMovePossible(allPossibleMoves, move)) return getInvalidMessage();

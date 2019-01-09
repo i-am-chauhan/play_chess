@@ -3,8 +3,8 @@ class Pawn {
     this.position = position;
     this.team = team;
     this.difference = {};
-    this.difference.white = [[1, 0], [1, 1], [1, -1]];
-    this.difference.black = [[-1, 0], [-1, -1], [-1, 1]];
+    this.difference.black = [[1, 0], [1, 1], [1, -1]];
+    this.difference.white = [[-1, 0], [-1, -1], [-1, 1]];
     this.board = board;
     this.family = family;
   }
