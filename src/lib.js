@@ -28,10 +28,10 @@ const createBoard = function () {
 
 const createInitialBoard = function () {
   const board = createBoard();
-  board[0] = ["R", "H", "B", "Q", "K", "B", "H", "R"];
-  board[1] = new Array(8).fill("P");
-  board[6] = new Array(8).fill("p");
-  board[7] = ["r", "h", "b", "k", "q", "b", "h", "r"];
+  board[0] = ["r", "h", "b", "k", "q", "b", "h", "r"];
+  board[1] = new Array(8).fill("p");
+  board[6] = new Array(8).fill("P");
+  board[7] = ["R", "H", "B", "Q", "K", "B", "H", "R"];
   return board;
 };
 
@@ -96,7 +96,7 @@ const getPiece = function (id) {
 };
 
 const placeMove = function (id) {
-  let enemyEmperor = { white: "k", black: "k" }
+  let enemyEmperor = { white: "k", black: "K" }
   let move = idToIndex(id);
   setAttributeToGetPiece();
   if (!isMovePossible(allPossibleMoves, move)) return getInvalidMessage();
