@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chess</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheet.css" />
+    <style>
+      td:hover{
+        cursor:pointer;
+        font-weight:900;
+      }
+    </style>
+    <script src="/src/pawn.js"></script>
+    <script src="/src/game.js"></script>
+    <script src="/src/knight.js"></script>
+    <script src="/src/rook.js"></script>
+    <script src="/src/bishop.js"></script>
+    <script src="/src/queen.js"></script>
+    <script src="/src/king.js"></script>
+    <script src="/src/formatBoard.js"></script>
+    <script src="/src/lib.js"></script>
+  </head>
+
+  <body style="display:flex; background-image: url(/back-main.jpg)">
+    <div style="width: 300px;height: 538px"></div>
+    <div style="display:flex;width:80%; margin-left:90px">
+      <div>
+        <table
+          style="border: 2px solid rgba(0, 0, 0, 0.863); background-color: white"
+        >
+          <tbody id="chessBoard"></tbody>
+        </table>
+        <p id="victoryMessage" class="info">This is some text.</p>
+      </div>
+      <div style="margin-left:20px;width: 200px; height:538px">
+        <div
+          style="font-size:50px;width: 200px; height:269px"
+          id="black_martyr"
+        ></div>
+        <span
+          style="font-size:50px;width: 500px; height:269px; position: absolute; top: 390px; margin-left: auto"
+          id="white_martyr"
+        >
+        </span>
+      </div>
+    </div>
+  </body>
+</html>

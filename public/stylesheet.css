@@ -1,0 +1,34 @@
+.killingMove{
+  background-color: red;
+}
+
+.white{
+  background-color: white;
+}
+
+.silver{
+  background-color: silver;
+}
+
+.emptyPlaceHighLighter{
+  background-color: rgb(141, 224, 193);
+}
+
+.soldierHighLighter{
+  background-color: rgb(240, 240, 153);
+}
+
+td {
+  height: 65px;
+  width: 75px;
+  font-size: 40px;
+  text-align: center
+}
+
+.info{
+  color:red;font-size:30px; margin-top: 8px
+}
+
+.take_piece{
+  margin: 0 auto;
+}

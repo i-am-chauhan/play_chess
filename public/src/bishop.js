@@ -1,10 +1,17 @@
 class Bishop {
-  constructor(position, board, family) {
+  constructor(position, family) {
     this.position = position;
+    this.family = family;
     this.positiveIndexDiffs = [1, 2, 3, 4, 5, 6, 7];
     this.negativeIndexDiffs = [-1, -2, -3, -4, -5, -6, -7];
-    this.board = board;
-    this.family = family;
+  }
+
+  getPosition() {
+    return this.position;
+  }
+
+  setPosition(x, y) {
+    this.position = new Position(x, y);
   }
 
   zip(firstList, secondList) {
@@ -32,7 +39,10 @@ class Bishop {
   }
 
   placeMove(diff) {
-    return [this.position[0] + diff[0], this.position[1] + diff[1]];
+    return new Position(
+      this.position.getX() + diff[0],
+      this.position.getY() + diff[1]
+    );
   }
 
   allPossibleMoves() {
@@ -50,21 +60,26 @@ class Bishop {
     return { upRightMoves, upLeftMoves, bottomRightMoves, bottomLeftMoves };
   }
 
-  filterMoves(move) {
-    return move.every(index => index >= 0 && index < 8);
+  isMoveInTheBound(move) {
+    return move >= 0 && move < 8;
   }
+
+  filterMoves(move) {
+    return this.isMoveInTheBound(move.getX()) && this.isMoveInTheBound(move.getY());
+  }
+
 
   possibleMovesInBoard() {
     const possibleMoves = this.allPossibleMoves();
     const validUpRightMoves = possibleMoves.upRightMoves.filter(
-      this.filterMoves
+      this.filterMoves,this
     );
-    const validUpLeftMoves = possibleMoves.upLeftMoves.filter(this.filterMoves);
+    const validUpLeftMoves = possibleMoves.upLeftMoves.filter(this.filterMoves,this);
     const validBottomRightMoves = possibleMoves.bottomRightMoves.filter(
-      this.filterMoves
+      this.filterMoves,this
     );
     const validBottomLeftMoves = possibleMoves.bottomLeftMoves.filter(
-      this.filterMoves
+      this.filterMoves,this
     );
     return {
       validUpRightMoves,
@@ -74,33 +89,42 @@ class Bishop {
     };
   }
 
-  isPlaceEmpty(move) {
-    return this.board[move[0]][move[1]] == " ";
+  isPlaceEmpty(board, move) {
+    return board[move.getX()][move.getY()] == " ";
   }
 
-  isSibling(move) {
-    return this.family.includes(this.board[move[0]][move[1]]);
+  isSibling(board, move) {
+    return this.family.includes(board[move.getX()][move.getY()]);
   }
 
-  getValidMoves(moves) {
-    let validMoves = [];
+  getValidMoves(board, moves) {
+    const validMoves = [];
     for (let index = 0; index < moves.length; index++) {
       let move = moves[index];
-      if (!this.isPlaceEmpty(move) && !this.isSibling(move)) {
+      let isPlaceOccupied = !this.isPlaceEmpty(board, move);
+      let belongsToOwnArmy = this.isSibling(board, move);
+      if (isPlaceOccupied && !belongsToOwnArmy) {
         validMoves.push(move);
         return validMoves;
       }
-      if (!this.isPlaceEmpty(move) && this.isSibling(move)) return validMoves;
+      if (isPlaceOccupied && belongsToOwnArmy) return validMoves;
       validMoves.push(move);
     }
     return validMoves;
   }
 
-  allValidPossibleMoves() {
-    const allMoves = this.possibleMovesInBoard();
-    console.log(allMoves);
-    return Object.keys(allMoves).reduce((list, moves) => {
-      return this.getValidMoves(allMoves[moves]).concat(list);
-    }, []);
-  }
+  validMovesByDirection(board) {
+		const allMoves = this.possibleMovesInBoard();
+		return Object.keys(allMoves).reduce((list, direction) => {
+			list[direction] = this.getValidMoves(board, allMoves[direction]);
+			return list;
+		}, {});
+	}
+
+	allValidPossibleMoves(board) {
+		const moves = this.validMovesByDirection(board);
+		return Object.keys(moves).reduce((list, direction) => {
+      return list.concat(moves[direction]);
+		}, []);
+	}
 }

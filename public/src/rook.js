@@ -1,10 +1,17 @@
 class Rook {
-  constructor(position, board, family) {
+  constructor(position, family) {
     this.position = position;
     this.positiveIndexDiffs = [1, 2, 3, 4, 5, 6, 7];
     this.negativeIndexDiffs = [-1, -2, -3, -4, -5, -6, -7];
-    this.board = board;
     this.family = family;
+  }
+
+  getPosition() {
+    return this.position;
+  }
+
+  setPosition(x, y) {
+    this.position = new Position(x, y);
   }
 
   zip(firstList, secondList) {
@@ -34,7 +41,10 @@ class Rook {
   }
 
   placeMove(diff) {
-    return [this.position[0] + diff[0], this.position[1] + diff[1]];
+    return new Position(
+      this.position.getX() + diff[0],
+      this.position.getY() + diff[1]
+    );
   }
 
   allPossibleMoves() {
@@ -56,8 +66,12 @@ class Rook {
     };
   }
 
+  isMoveInTheBound(move) {
+    return move >= 0 && move < 8;
+  }
+
   filterMoves(move) {
-    return move.every(index => index >= 0 && index < 8);
+    return this.isMoveInTheBound(move.getX()) && this.isMoveInTheBound(move.getY());
   }
 
   possibleMovesInBoard() {
@@ -67,10 +81,10 @@ class Rook {
       downSideMoves,
       rightSideMoves
     } = this.allPossibleMoves();
-    const validUpSideMoves = upSideMoves.filter(this.filterMoves);
-    const validLeftSideMoves = leftSideMoves.filter(this.filterMoves);
-    const validDownSideMoves = downSideMoves.filter(this.filterMoves);
-    const validRightSideMoves = rightSideMoves.filter(this.filterMoves);
+    const validUpSideMoves = upSideMoves.filter(this.filterMoves,this);
+    const validLeftSideMoves = leftSideMoves.filter(this.filterMoves,this);
+    const validDownSideMoves = downSideMoves.filter(this.filterMoves,this);
+    const validRightSideMoves = rightSideMoves.filter(this.filterMoves,this);
     return {
       validUpSideMoves,
       validLeftSideMoves,
@@ -79,32 +93,42 @@ class Rook {
     };
   }
 
-  isPlaceEmpty(move) {
-    return this.board[move[0]][move[1]] == " ";
+  isPlaceEmpty(board, move) {
+    return board[move.getX()][move.getY()] == " ";
   }
 
-  isSibling(move) {
-    return this.family.includes(this.board[move[0]][move[1]]);
+  isSibling(board, move) {
+    return this.family.includes(board[move.getX()][move.getY()]);
   }
 
-  getValidMoves(moves) {
+  getValidMoves(board, moves) {
     let validMoves = [];
     for (let index = 0; index < moves.length; index++) {
       let move = moves[index];
-      if (!this.isPlaceEmpty(move) && !this.isSibling(move)) {
+      let isPlaceOccupied = !this.isPlaceEmpty(board, move);
+      let belongsToOwnArmy = this.isSibling(board, move);
+      if (isPlaceOccupied && !belongsToOwnArmy) {
         validMoves.push(move);
         return validMoves;
       }
-      if (!this.isPlaceEmpty(move) && this.isSibling(move)) return validMoves;
+      if (isPlaceOccupied && belongsToOwnArmy) return validMoves;
       validMoves.push(move);
     }
     return validMoves;
   }
 
-  allValidPossibleMoves() {
-    const allMoves = this.possibleMovesInBoard();
-    return Object.keys(allMoves).reduce((list, moves) => {
-      return this.getValidMoves(allMoves[moves]).concat(list);
-    }, []);
-  }
+  validMovesByDirection(board) {
+		const allMoves = this.possibleMovesInBoard();
+		return Object.keys(allMoves).reduce((list, direction) => {
+			list[direction] = this.getValidMoves(board, allMoves[direction]);
+			return list;
+		}, {});
+	}
+
+	allValidPossibleMoves(board) {
+		const moves = this.validMovesByDirection(board);
+		return Object.keys(moves).reduce((list, direction) => {
+      return list.concat(moves[direction]);
+		}, []);
+	}
 }
